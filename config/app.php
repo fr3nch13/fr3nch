@@ -12,6 +12,17 @@ return [
     'debug' => filter_var(env('DEBUG', true), FILTER_VALIDATE_BOOLEAN),
 
     /**
+     * Used for site specific stuff
+     */
+    'Site' => [
+        'name' => env('SITE_NAME', 'CakePHP'),
+        'name_sm' => env('SITE_NAME_SM', 'CPHP'),
+        'protocol' => env('SITE_PROTOCOL', 'http'),
+        'hostname' => env('SITE_HOSTNAME', 'localhost'),
+        'port' => env('SITE_PORT', 80)
+    ],
+
+    /**
      * Configure basic information about the application.
      *
      * - namespace - The namespace to find app classes under.
@@ -381,6 +392,6 @@ return [
      * To use database sessions, load the SQL file located at config/schema/sessions.sql
      */
     'Session' => [
-        'defaults' => 'php',
+        'defaults' => env('SESSION_DEFAULTS', 'php'),
     ],
 ];

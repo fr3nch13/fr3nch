@@ -27,7 +27,7 @@ if (!Configure::read('debug')) :
     );
 endif;
 
-$cakeDescription = 'CakePHP: the rapid development PHP framework';
+$cakeDescription = ' CakePHP: the rapid development PHP framework';
 ?>
 <!DOCTYPE html>
 <html>
@@ -151,6 +151,7 @@ $cakeDescription = 'CakePHP: the rapid development PHP framework';
             <li class="bullet success">CakePHP is able to connect to the database.</li>
         <?php else : ?>
             <li class="bullet problem">CakePHP is NOT able to connect to the database.<br /><?= $errorMsg ?></li>
+            <li class="bullet problem"><?= Configure::read('Datasources.default.url') ?></li>
         <?php endif; ?>
         </ul>
     </div>
