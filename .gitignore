@@ -3,8 +3,12 @@
 #/config/app.php
 /config/.env
 /logs/*
-/tmp/*
+!/logs/empty
+/tmp/**.*
+/tmp/**_*
+/tmp/cache/*_*
 /vendor/*
+!/vendor/empty
 
 # OS generated files #
 ######################
