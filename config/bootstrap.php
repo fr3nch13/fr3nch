@@ -38,6 +38,8 @@ use Cake\Core\Plugin;
 use Cake\Database\Type;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\ErrorHandler;
+use Cake\Event\EventManager;
+use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Cake\Mailer\Email;
@@ -49,13 +51,13 @@ use Cake\Utility\Security;
  * You should copy `config/.env.default to `config/.env` and set/modify the
  * variables as required.
  */
-// if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
-//     $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
-//     $dotenv->parse()
-//         ->putenv()
-//         ->toEnv()
-//         ->toServer();
-// }
+if (!env('APP_NAME') && file_exists(CONFIG . '.env')) {
+    $dotenv = new \josegonzalez\Dotenv\Loader([CONFIG . '.env']);
+    $dotenv->parse()
+        ->putenv()
+        ->toEnv()
+        ->toServer();
+}
 
 /*
  * Read configuration file and inject configuration into various
@@ -136,7 +138,7 @@ if (!Configure::read('App.fullBaseUrl')) {
         $s = 's';
     }
 
-    $httpHost = env('HTTP_HOST');
+    $httpHost = env('SITE_HOSTNAME', 'localhost');
     if (isset($httpHost)) {
         Configure::write('App.fullBaseUrl', 'http' . $s . '://' . $httpHost);
     }
@@ -144,7 +146,7 @@ if (!Configure::read('App.fullBaseUrl')) {
 }
 
 Cache::setConfig(Configure::consume('Cache'));
-ConnectionManager::setConfig(Configure::consume('Datasources'));
+ConnectionManager::setConfig(Configure::read('Datasources'));
 Email::setConfigTransport(Configure::consume('EmailTransport'));
 Email::setConfig(Configure::consume('Email'));
 Log::setConfig(Configure::consume('Log'));
@@ -197,3 +199,20 @@ Type::build('timestamp')
 //Inflector::rules('irregular', ['red' => 'redlings']);
 //Inflector::rules('uninflected', ['dontinflectme']);
 //Inflector::rules('transliteration', ['/å/' => 'aa']);
+
+/*
+ * Make sure we're not using auto tables.
+ */
+ $isCakeBakeShellRunning = (PHP_SAPI === 'cli' && isset($argv[1]) && $argv[1] === 'bake');
+ if (!$isCakeBakeShellRunning) {
+     EventManager::instance()->on('Model.initialize', function( $event ) {
+         $subject = $event->getSubject();
+         if (get_class($subject) === 'Cake\ORM\Table') {
+             $msg = sprintf(
+                 'Missing table class or incorrect alias when registering table class for database table %s.',
+                 $subject->getTable()
+             );
+             throw new InternalErrorException($msg);
+         }
+     });
+ }
