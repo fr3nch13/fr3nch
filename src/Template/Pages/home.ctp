@@ -158,7 +158,7 @@ $cakeDescription = ' CakePHP: the rapid development PHP framework';
         <h4>DebugKit</h4>
         <ul>
         <?php if (Plugin::loaded('DebugKit')) : ?>
-            <li class="bullet success">DebugKit is loaded.</li>
+            <li class="bullet success">DebugKit is loaded. </li>
         <?php else : ?>
             <li class="bullet problem">DebugKit is NOT loaded. You need to either install pdo_sqlite, or define the "debug_kit" connection name.</li>
         <?php endif; ?>
